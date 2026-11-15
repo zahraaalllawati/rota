@@ -444,17 +444,23 @@ a { color: var(--plum); }
     var at = function (min) { return ((min - ds + 1440) % 1440) / 1440 * 100; };
     var pct = function (min) { return at(min).toFixed(3) + '%'; };
     var here = isToday ? at(now.min) : -1;
-    // A label sits at the start of its stretch, or at the end when the pin is nearer the start.
-    var seg = function (cls, from, to, text) {
-      var s = el('div', 'seg ' + cls, text);
+    // A label never sits under the pin. It goes on the roomier side of the pin, in its shorter
+    // form if that is all there is room for, and is left out if even that would touch the pin.
+    var seg = function (cls, from, to, text, brief) {
+      var s = el('div', 'seg ' + cls), label = text ? el('span', '', text) : null;
       s.style.left = from + '%'; s.style.width = (to - from) + '%';
-      if (text && here >= from && here < to && here - from < to - here) s.style.justifyContent = 'flex-end';
+      if (label) s.appendChild(label);
       track.appendChild(s);
+      if (!label || here < from || here >= to) return;
+      var px = track.clientWidth / 100, before = (here - from) * px, after = (to - here) * px, room = Math.max(before, after) - 20;
+      if (label.offsetWidth > room && brief) label.textContent = brief;
+      if (label.offsetWidth > room) { s.removeChild(label); return; }
+      if (after > before) s.style.justifyContent = 'flex-end';
     };
     var tick = function (left, text, cls) { var t = el('span', cls || '', text); t.style.left = left; ticks.appendChild(t); };
     if (isOff(day)) seg('seg-call', 0, 100, 'On call, day and night');
     else {
-      seg('seg-day', 0, at(cs), 'Day team');
+      seg('seg-day', 0, at(cs), 'Day team', 'Day');
       seg('seg-over', at(cs), at(de), '');
       seg('seg-call', at(de), 100, 'On call');
       tick(pct(cs), hm(cs));
@@ -617,6 +623,7 @@ a { color: var(--plum); }
   var back = function () { if (live && !document.hidden && Date.now() - lastAsk > 45000) ask(); else draw(); };
   document.addEventListener('visibilitychange', back);
   window.addEventListener('pageshow', back);
+  window.addEventListener('resize', draw);       // a phone turned on its side: the band is measured again
 
   draw();
   ask();
