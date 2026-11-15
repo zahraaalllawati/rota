@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Who is on duty in PICU, HDU and the RRT, day and night.">
+<meta name="theme-color" content="#F6F3F7">
+<meta name="apple-mobile-web-app-title" content="PICU on duty">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PICU on duty">
+<meta property="og:description" content="Who is on duty in PICU, HDU and the RRT, day and night.">
+<meta property="og:url" content="https://zahraaalllawati.github.io/rota/">
+<meta property="og:image" content="https://zahraaalllawati.github.io/rota/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>PICU on duty</title>
+<link rel="preload" href="barlow-semi-condensed-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="barlow-semi-condensed-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="barlow-semi-condensed-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="barlow-semi-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<style>
+@font-face { font-family: "Barlow Semi Condensed"; font-style: normal; font-weight: 400; font-display: swap; src: url(barlow-semi-condensed-400.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Semi Condensed"; font-style: normal; font-weight: 500; font-display: swap; src: url(barlow-semi-condensed-500.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Semi Condensed"; font-style: normal; font-weight: 600; font-display: swap; src: url(barlow-semi-condensed-600.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Semi Condensed"; font-style: normal; font-weight: 700; font-display: swap; src: url(barlow-semi-condensed-700.woff2) format("woff2"); }
+</style>
+<style>
+:root {
+  --paper: #F6F3F7;
+  --card: #FFFFFF;
+  --ink: #2A1F2B;
+  --ink-soft: #5F5462;
+  --ink-faint: #746978;
+  --rule: #E4DDE7;
+  --plum: #4A1D3F;
+  --amber: #E8A33D;
+  --amber-deep: #6F4704;
+  --day: #FFF1CF;
+  --night: #E9E2F1;
+  --picu: #6E2A56;
+  --hdu: #0F6F63;
+  --rrt: #B93D26;
+  --tag: #F1EDF3;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 400 17px/1.35 "Barlow Semi Condensed", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+h1, h2, h3, p, dl, dt, dd { margin: 0; }
+button { font: inherit; color: inherit; }
+a { color: var(--plum); }
+.page { max-width: 1180px; margin: 0 auto; padding: 10px 14px 30px; }
+
+/* ---------- top: the date and the clock ---------- */
+.unit { font-size: .86rem; color: var(--ink-soft); }
+.unit b { color: var(--plum); font-weight: 700; margin-right: 7px; }
+.top { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin-top: 3px; }
+.top h1 { font-size: 1.8rem; font-size: clamp(1.42rem, 6.6vw, 1.8rem); line-height: 1.08; font-weight: 700; letter-spacing: -.005em; }
+.meta { font-size: .92rem; color: var(--ink-soft); margin-top: 3px; min-height: 1.2em; }
+.clock { text-align: right; font-size: 1.8rem; font-size: clamp(1.42rem, 6.6vw, 1.8rem); line-height: 1.08; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.clock small { display: block; font-size: .8rem; font-weight: 500; color: var(--ink-soft); margin-top: 3px; }
+
+/* ---------- the day and night band ---------- */
+.band { margin-top: 8px; }
+.band-wrap { position: relative; }
+.track { position: relative; height: 26px; border-radius: 8px; overflow: hidden; background: var(--night); }
+.seg { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; padding: 0 10px; font-size: .86rem; font-weight: 600; white-space: nowrap; overflow: hidden; }
+.seg-day { background: var(--day); color: var(--amber-deep); }
+.seg-over { padding: 0; background: repeating-linear-gradient(135deg, var(--day) 0 4px, var(--night) 4px 8px); }
+.seg-call { background: var(--night); color: var(--plum); }
+.pin { position: absolute; top: -4px; bottom: -4px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: var(--ink); box-shadow: 0 0 0 2px rgba(255, 255, 255, .85); }
+.pin:before { content: ""; position: absolute; left: 50%; top: -6px; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px rgba(255, 255, 255, .85); }
+.ticks { position: relative; height: 15px; margin-top: 3px; font-size: .74rem; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+.ticks span { position: absolute; top: 0; transform: translateX(-50%); }
+.ticks span.t-first { transform: none; }
+.ticks span.t-last { transform: translateX(-100%); }
+
+.status { margin-top: 5px; font-size: 1.08rem; font-weight: 500; line-height: 1.3; }
+
+/* ---------- notices ---------- */
+.notice { margin-top: 12px; padding: 9px 12px; border-radius: 10px; background: #FFEFC9; color: #53360A; font-size: .96rem; display: flex; gap: 8px 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.notice.is-bad { background: #FADFD9; color: #651C0E; }
+.notice button { border: 0; background: var(--ink); color: #fff; border-radius: 8px; padding: 6px 13px; font-weight: 600; cursor: pointer; }
+
+/* ---------- a shift: the day team, or the on-call team ---------- */
+.shift { margin-top: 10px; background: var(--card); border: 1px solid var(--rule); border-radius: 14px; overflow: hidden; }
+.shift.is-now { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+.shift-head { display: flex; align-items: center; gap: 4px 10px; padding: 6px 14px 7px; flex-wrap: wrap; }
+.shift-day .shift-head { background: var(--day); }
+.shift-call .shift-head { background: var(--night); }
+.shift-head h2 { font-size: 1.32rem; font-weight: 700; line-height: 1.15; }
+.when { font-size: .98rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.pill { margin-left: auto; font-size: .86rem; font-weight: 600; padding: 3px 11px 4px; border-radius: 999px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pill-now { background: var(--ink); color: #fff; }
+.pill-next { box-shadow: inset 0 0 0 1.5px var(--ink-soft); color: var(--ink); }
+.pill-done { color: var(--ink-soft); padding-right: 0; }
+.glyph { flex: 0 0 auto; width: 16px; height: 16px; border-radius: 50%; }
+.glyph-sun { background: var(--amber); box-shadow: 0 0 0 3px rgba(232, 163, 61, .32); margin: 0 3px; }
+.glyph-moon { box-shadow: inset 5px -3px 0 0 var(--plum); transform: rotate(-20deg); margin-right: 1px; }
+.shift.is-done .shift-body { opacity: .6; }
+
+/* the day team: one block per service */
+.areas { display: grid; gap: 1px; background: var(--rule); }
+.area { background: var(--card); padding: 8px 14px 10px; }
+.area h3 { display: flex; align-items: baseline; gap: 9px; font-size: 1.32rem; font-weight: 700; line-height: 1.1; padding-top: 6px; border-top: 4px solid currentColor; }
+.area h3 small { font-size: .88rem; font-weight: 500; color: var(--ink-soft); }
+.area-0 h3 { color: var(--picu); }
+.area-1 h3 { color: var(--hdu); }
+.area-2 h3 { color: var(--rrt); }
+/* consultant and specialist side by side; residents, GFPs and interns underneath as smaller tags */
+.rows { margin-top: 6px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+.row { min-width: 0; }
+.row dt { font-size: .9rem; color: var(--ink-soft); margin-bottom: 2px; }
+.row dd { display: flex; flex-wrap: wrap; gap: 5px; min-width: 0; }
+.row-team { grid-column: 1 / -1; }
+.row-team .mag { font-size: .98rem; padding: 2px 8px 3px; border-radius: 8px; }
+
+/* the on-call team: one line per tier */
+.tiers { display: grid; gap: 1px; background: var(--rule); }
+.tier { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 8px; align-items: start; background: var(--card); padding: 9px 14px 10px; }
+.tier-h b { display: block; font-size: 1rem; font-weight: 600; line-height: 1.2; padding-top: 5px; }
+.tier-h small { font-size: .88rem; color: var(--ink-soft); }
+.tier-p { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+
+/* a person: a name tag in their own rota colour */
+.who { display: flex; max-width: 100%; min-width: 0; }
+.mag { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; padding: 3px 10px 4px; border-radius: 9px; background: var(--tag); font-size: 1.18rem; font-weight: 600; line-height: 1.2; max-width: 100%; }
+.mag-n { overflow-wrap: anywhere; }
+.mag-l { font-size: .8em; font-weight: 700; opacity: .72; white-space: nowrap; }
+.mag-w { font-size: .82em; font-weight: 600; white-space: nowrap; }
+.mag.is-away { background: none; box-shadow: inset 0 0 0 1.5px var(--rule); color: var(--ink-soft); font-weight: 500; }
+
+.is-checking .shift-body { opacity: .45; }
+
+/* ---------- choose a day ---------- */
+.days-label { margin-top: 20px; font-size: .92rem; color: var(--ink-soft); }
+.days { display: flex; gap: 6px; overflow-x: auto; padding: 3px; margin: 5px -3px 0; scrollbar-width: none; }
+.days::-webkit-scrollbar { display: none; }
+.day { flex: 0 0 auto; min-width: 54px; padding: 6px 9px 7px; border: 1px solid var(--rule); border-radius: 10px; background: var(--card); cursor: pointer; text-align: center; line-height: 1.12; }
+.day span { display: block; font-size: .8rem; color: var(--ink-soft); }
+.day b { display: block; font-size: 1.12rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.day.is-sel { background: var(--plum); border-color: var(--plum); color: #fff; }
+.day.is-sel span { color: #EBDCE6; }
+.day:focus-visible, .notice button:focus-visible, a:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+.foot { margin-top: 18px; font-size: .88rem; color: var(--ink-soft); display: grid; gap: 3px; }
+
+@media (max-width: 359px) {
+  .tier { grid-template-columns: minmax(0, 1fr); gap: 3px; }
+  .tier-h b { display: inline; padding-top: 0; margin-right: 6px; }
+  .mag { font-size: 1.1rem; }
+}
+@media (min-width: 560px) {
+  .tier { grid-template-columns: 104px minmax(0, 1fr); }
+}
+@media (min-width: 860px) {
+  body { font-size: 18px; }
+  .page { padding: 22px 26px 36px; }
+  .top h1, .clock { font-size: 2.2rem; }
+  .top { margin-top: 4px; }
+  .track { height: 34px; }
+  .band { margin-top: 14px; }
+  .status { margin-top: 8px; font-size: 1.12rem; }
+  .shift { margin-top: 14px; }
+  .areas, .tiers { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+  .area { padding: 14px 18px 18px; }
+  .area h3 { font-size: 1.5rem; padding-top: 9px; }
+  .rows { margin-top: 10px; gap: 10px 14px; }
+  .row dt { margin-bottom: 3px; }
+  .row-team .mag { font-size: 1rem; padding: 3px 9px 4px; }
+  .mag { padding: 4px 10px 5px; }
+  .tier { grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 13px 18px 16px; align-content: start; }
+  .tier-h b { padding-top: 0; font-size: 1.05rem; }
+  .tier-h { margin-bottom: 4px; }
+  .shift-head { padding: 10px 18px 11px; }
+}
+</style>
+</head>
+<body>
+<div class="page" id="page">
+  <p class="unit" id="unit"></p>
+  <header class="top">
+    <div>
+      <h1 id="date"></h1>
+      <p class="meta" id="meta"></p>
+    </div>
+    <div class="clock"><span id="clock"></span><small>Muscat time</small></div>
+  </header>
+
+  <div id="notices"></div>
+
+  <div class="band" id="band" aria-hidden="true">
+    <div class="band-wrap"><div class="track" id="track"></div><div class="pin" id="pin"></div></div>
+    <div class="ticks" id="ticks"></div>
+  </div>
+  <p class="status" id="status" role="status"></p>
+
+  <main id="board"></main>
+
+  <p class="days-label" id="days-label">Another day</p>
+  <nav class="days" id="days" aria-labelledby="days-label"></nav>
+
+  <footer class="foot" id="foot"></footer>
+</div>
+
+<script>var BOOT = {"board":null,"cfg":{"title":"PICU on duty","unit":"Sultan Qaboos University Hospital","hub":"https://picuhub.om","areas":[{"label":"PICU","sub":"Intensive care"},{"label":"HDU","sub":"High dependency"},{"label":"RRT","sub":"Rapid response team"}],"tiers":[{"label":"1st on call","sub":"Junior"},{"label":"2nd on call","sub":"R4"},{"label":"3rd on call","sub":"Specialist"},{"label":"4th on call","sub":"Consultant"}],"dayStart":480,"dayEnd":960,"callStart":900,"offsetMin":240},"api":"https://script.google.com/macros/s/AKfycbzqNTRqsxggi-bXbMA39YSNV8XCTs65Ub69DfyAIFpwkk1k9KETxqLh4RdME7xxFFidBQ/exec"};</script>
+<script>
+(function () {
+  'use strict';
+
+  var boot = (typeof BOOT === 'object' && BOOT) || {};
+  var cfg = boot.cfg || {};
+  var board = boot.board || null;
+  var readError = '';
+  // Inside Google the page asks through google.script.run. As the short page, on its own address,
+  // it asks the same script for plain data over the web, and keeps the last reading on the phone
+  // so it opens at once.
+  var canRun = !!(window.google && google.script && google.script.run);
+  var api = !canRun && boot.api ? String(boot.api) : '';
+  var live = canRun || !!api;
+  var KEEP = 'picu-on-duty.reading.v1';
+  if (api && !board) {
+    try {
+      var kept = JSON.parse(localStorage.getItem(KEEP));
+      // Only a reading that still covers today is worth opening on.
+      if (usable(kept) && kept.days[kept.days.length - 1].date >= dateInMuscat(kept.cfg || cfg)) { board = kept; if (kept.cfg) cfg = kept.cfg; }
+    } catch (e) { board = null; }
+  }
+  function usable(b) { return !!(b && b.builtAt && b.days && b.days.length && b.days[0].areas && b.days[0].oncall); }
+  function dateInMuscat(c) { return new Date(Date.now() + (c.offsetMin || 240) * 60000).toISOString().slice(0, 10); }
+
+  var skew = 0;            // the server's clock minus this device's clock
+  var asking = false;      // a fresh reading has been asked for and is not back yet
+  var failed = false;      // the last ask did not come back
+  var confirmed = !live;   // a fresh reading has come back since the page opened
+  var selected = null;     // the date being looked at; null follows today
+  var lastTouch = Date.now();
+  var lastAsk = 0;
+  var drawn = { main: '', days: '', unit: null };
+
+  var WD = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var WD3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var MON = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  // ---------------------------------------------------------- small helpers
+
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.appendChild(document.createTextNode(text));
+    return e;
+  }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function hm(min) { min = ((min % 1440) + 1440) % 1440; return pad(Math.floor(min / 60)) + ':' + pad(min % 60); }
+  function nowMs() { return Date.now() + skew; }
+
+  // Oman keeps one clock all year, so Muscat time is the world clock plus a fixed offset.
+  function muscat(ms) {
+    var d = new Date(ms + (cfg.offsetMin || 240) * 60000);
+    return { key: d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()), min: d.getUTCHours() * 60 + d.getUTCMinutes() };
+  }
+  function utc(key) { var p = key.split('-'); return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); }
+  function shiftKey(key, n) { var d = utc(key); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  function longDate(key) { var d = utc(key); return WD[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()]; }
+  function wd3(key) { return WD3[utc(key).getUTCDay()]; }
+  function dayOf(key) {
+    var days = (board && board.days) || [];
+    for (var i = 0; i < days.length; i++) if (days[i].date === key) return days[i];
+    return null;
+  }
+
+  // A weekend or a public holiday, when nobody is rostered for day cover: the on-call team has the whole day.
+  function isOff(day) {
+    if (!day) return false;
+    if (!day.weekend && !day.holiday) return false;
+    for (var i = 0; i < day.areas.length; i++) if (day.areas[i].specialist.length) return false;
+    return true;
+  }
+
+  // Dark writing in the same hue as a person's light rota colour.
+  function inkFor(hex) {
+    var r = parseInt(hex.substr(0, 2), 16) / 255, g = parseInt(hex.substr(2, 2), 16) / 255, b = parseInt(hex.substr(4, 2), 16) / 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min, l = (max + min) / 2, h = 0, s = 0;
+    if (d) {
+      s = d / (1 - Math.abs(2 * l - 1));
+      h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+      h = (h * 60 + 360) % 360;
+    }
+    return 'hsl(' + Math.round(h) + ',' + Math.round(Math.max(Math.min(s, 1), .45) * 100) + '%,21%)';
+  }
+
+  // ---------------------------------------------------------- which shifts to show, and in what state
+
+  // Every shift for the date on screen. For today each one is 'now', 'next' or 'done'.
+  function shiftsFor(viewKey, isToday, now) {
+    var day = dayOf(viewKey), list = [];
+    if (!day) return list;
+    var off = isOff(day), next = wd3(shiftKey(viewKey, 1));
+    var ds = cfg.dayStart, de = cfg.dayEnd, cs = cfg.callStart;
+
+    if (isToday && now.min < ds) {                       // before the morning handover: last night's team is still on
+      var prev = dayOf(shiftKey(viewKey, -1));
+      if (prev && hasCallTeam(prev)) list.push({ kind: 'call', day: prev, state: 'now', off: isOff(prev), carried: true, title: 'On call since ' + (isOff(prev) ? 'yesterday morning' : 'last night'), when: 'until ' + hm(ds), pill: 'On now', order: 0 });
+    }
+    if (!day.published) return list;
+    if (!off && hasDayTeam(day)) {
+      var s1 = !isToday ? '' : now.min < ds ? 'next' : now.min < de ? 'now' : 'done';
+      list.push({ kind: 'day', day: day, state: s1, title: 'Day team', when: hm(ds) + ' to ' + hm(de),
+        pill: s1 === 'now' ? 'On now' : s1 === 'next' ? 'Next' : s1 === 'done' ? 'Ended' : '', order: s1 === 'now' ? 1 : s1 === 'next' ? 2 : 9 });
+    }
+    var start = off ? ds : cs;
+    var s2 = !isToday ? '' : now.min < start ? 'next' : 'now';
+    if (hasCallTeam(day)) list.push({ kind: 'call', day: day, state: s2, off: off, title: s2 === 'next' && !off ? 'On call tonight' : 'On call',
+      when: hm(start) + ' to ' + hm(ds) + ' ' + next,
+      pill: s2 === 'now' ? 'On now' : s2 === 'next' ? 'Next' : '', order: s2 === 'now' ? 0.5 : 3 });
+
+    if (isToday) list.sort(function (a, b) { return a.order - b.order; });
+    var upcoming = 0;
+    for (var i = 0; i < list.length; i++) if (list[i].state === 'next' && upcoming++) list[i].pill = 'Later';
+    return list;
+  }
+
+  function statusLine(viewKey, isToday, now, day) {
+    var ds = cfg.dayStart, de = cfg.dayEnd, cs = cfg.callStart;
+    var prev = isToday && now.min < ds ? dayOf(shiftKey(viewKey, -1)) : null;
+    var carried = prev && hasCallTeam(prev) ? 'On call until ' + hm(ds) + '. ' : '';
+    if (!day || !day.published) return carried + 'The rota for ' + (isToday ? 'today' : longDate(viewKey)) + ' has not been published yet.';
+    if (!isToday) return 'The rota for ' + longDate(viewKey) + '.' + (viewKey > now.key ? ' It can still change.' : '');
+    var off = isOff(day);
+    var why = day.holiday ? 'Public holiday (' + day.holiday + '). ' : day.weekend ? 'Weekend. ' : '';
+    if (now.min < ds) return carried + (off ? why + 'Today\u2019s team takes over at ' + hm(ds) + '.' : 'Day team from ' + hm(ds) + '.');
+    if (off) return why + 'On call until ' + hm(ds) + ' tomorrow.';
+    if (now.min < cs) return 'Day team until ' + hm(de) + '. On call from ' + hm(cs) + '.';
+    if (now.min < de) return 'Handover. On call from ' + hm(cs) + ', day team until ' + hm(de) + '.';
+    return 'On call until ' + hm(ds) + ' tomorrow.';
+  }
+
+  // ---------------------------------------------------------- drawing people
+
+  function person(p) {
+    var w = el('div', 'who'), m = el('span', 'mag');
+    var away = !!(p.s && p.s !== 'in');
+    if (away) m.className += ' is-away';
+    else if (p.c && /^[0-9A-Fa-f]{6}$/.test(p.c)) { m.style.backgroundColor = '#' + p.c; m.style.color = inkFor(p.c); }
+    m.appendChild(el('span', 'mag-n', p.n));
+    if (p.l) m.appendChild(el('span', 'mag-l', p.l));
+    if (away && p.t) m.appendChild(el('span', 'mag-w', p.t));
+    w.appendChild(m);
+    return w;
+  }
+
+  function people(into, list) {
+    for (var i = 0; i < list.length; i++) into.appendChild(person(list[i]));
+  }
+
+  // The page lists who is on and nothing else: an empty slot in the rota is not drawn at all.
+  function areaRows(a) {
+    return [
+      ['Consultant', a.consultant, 'row-staff'],
+      ['Specialist', a.specialist, 'row-staff'],
+      [a.residents.length === 1 ? 'Resident' : 'Residents', a.residents, 'row-team'],
+      ['GFP', a.gfp, 'row-team'],
+      [a.interns.length === 1 ? 'Intern' : 'Interns', a.interns, 'row-team']
+    ].filter(function (r) { return r[1].length; });
+  }
+  function hasDayTeam(day) { for (var i = 0; i < day.areas.length; i++) if (areaRows(day.areas[i]).length) return true; return false; }
+  function hasCallTeam(day) { for (var i = 0; i < day.oncall.length; i++) if (day.oncall[i].length) return true; return false; }
+
+  function dayBody(day) {
+    var body = el('div', 'shift-body'), grid = el('div', 'areas');
+    for (var i = 0; i < day.areas.length; i++) {
+      var rows = areaRows(day.areas[i]), meta = cfg.areas[i] || {};
+      if (!rows.length) continue;
+      var box = el('article', 'area area-' + i), h3 = el('h3', '', meta.label || '');
+      if (meta.sub) { h3.appendChild(document.createTextNode(' ')); h3.appendChild(el('small', '', meta.sub)); }
+      box.appendChild(h3);
+      var dl = el('dl', 'rows');
+      for (var r = 0; r < rows.length; r++) {
+        var line = el('div', 'row ' + rows[r][2]), dd = el('dd');
+        line.appendChild(el('dt', '', rows[r][0]));
+        people(dd, rows[r][1]);
+        line.appendChild(dd);
+        dl.appendChild(line);
+      }
+      box.appendChild(dl);
+      grid.appendChild(box);
+    }
+    body.appendChild(grid);
+    return body;
+  }
+
+  function callBody(day) {
+    var body = el('div', 'shift-body'), grid = el('div', 'tiers');
+    for (var i = 0; i < day.oncall.length; i++) {
+      if (!day.oncall[i].length) continue;
+      var t = cfg.tiers[i] || {}, box = el('div', 'tier'), head = el('div', 'tier-h'), list = el('div', 'tier-p');
+      head.appendChild(el('b', '', t.label || ''));
+      if (t.sub) head.appendChild(el('small', '', t.sub));
+      people(list, day.oncall[i]);
+      box.appendChild(head); box.appendChild(list);
+      grid.appendChild(box);
+    }
+    body.appendChild(grid);
+    return body;
+  }
+
+  function shiftBox(s) {
+    var box = el('section', 'shift shift-' + s.kind + (s.state ? ' is-' + s.state : ''));
+    var head = el('header', 'shift-head');
+    head.appendChild(el('span', 'glyph glyph-' + (s.kind === 'day' ? 'sun' : 'moon')));
+    head.appendChild(el('h2', '', s.title));
+    head.appendChild(el('span', 'when', s.when));
+    if (s.pill) head.appendChild(el('span', 'pill pill-' + s.state, s.pill));
+    box.appendChild(head);
+    box.appendChild(s.kind === 'day' ? dayBody(s.day) : callBody(s.day));
+    return box;
+  }
+
+  // ---------------------------------------------------------- drawing the page
+
+  function drawBand(viewKey, isToday, now) {
+    var ds = cfg.dayStart, de = cfg.dayEnd, cs = cfg.callStart;
+    // The band runs from one morning handover to the next. Before the handover it is still yesterday's duty day.
+    var dutyKey = isToday && now.min < ds ? shiftKey(viewKey, -1) : viewKey;
+    var day = dayOf(dutyKey), track = $('track'), ticks = $('ticks'), pin = $('pin');
+    clear(track); clear(ticks);
+    $('band').style.display = day ? '' : 'none';
+    if (!day) return;
+    var at = function (min) { return ((min - ds + 1440) % 1440) / 1440 * 100; };
+    var pct = function (min) { return at(min).toFixed(3) + '%'; };
+    var here = isToday ? at(now.min) : -1;
+    // A label sits at the start of its stretch, or at the end when the pin is nearer the start.
+    var seg = function (cls, from, to, text) {
+      var s = el('div', 'seg ' + cls, text);
+      s.style.left = from + '%'; s.style.width = (to - from) + '%';
+      if (text && here >= from && here < to && here - from < to - here) s.style.justifyContent = 'flex-end';
+      track.appendChild(s);
+    };
+    var tick = function (left, text, cls) { var t = el('span', cls || '', text); t.style.left = left; ticks.appendChild(t); };
+    if (isOff(day)) seg('seg-call', 0, 100, 'On call, day and night');
+    else {
+      seg('seg-day', 0, at(cs), 'Day team');
+      seg('seg-over', at(cs), at(de), '');
+      seg('seg-call', at(de), 100, 'On call');
+      tick(pct(cs), hm(cs));
+    }
+    tick('0%', hm(ds), 't-first');
+    tick(pct(0), '00:00');
+    tick('100%', hm(ds), 't-last');
+    pin.style.display = isToday ? '' : 'none';
+    if (isToday) pin.style.left = pct(now.min);
+  }
+
+  function drawNotices(viewKey, isToday, now) {
+    var box = $('notices');
+    clear(box);
+    var add = function (text, bad, button, act) {
+      var n = el('div', 'notice' + (bad ? ' is-bad' : ''));
+      n.appendChild(el('span', '', text));
+      if (button) { var b = el('button', '', button); b.type = 'button'; b.onclick = act; n.appendChild(b); }
+      box.appendChild(n);
+    };
+    if (!isToday) add('You are looking at ' + longDate(viewKey) + ', not today.', false, 'Back to today', function () { choose(null); });
+    if (!board) { if (failed || !live) add(readError || 'The rota could not be read just now.', true, live ? 'Try again' : '', ask); return; }
+    var read = 'read at ' + board.builtText + (board.today !== now.key ? ' on ' + longDate(board.today) : '');
+    if (!live) add('Preview. This is a copy of the rota ' + read + '. The live page keeps itself up to date.', false);
+    else if (failed || board.stale) add('The rota could not be reached just now. This was ' + read + '.', true, 'Try again', ask);
+  }
+
+  function drawDays(todayKey, viewKey) {
+    var keys = [];
+    for (var i = 0; board && i < board.days.length; i++) keys.push(board.days[i].date);
+    var stamp = todayKey + '|' + viewKey + '|' + keys.join(',');
+    if (stamp === drawn.days) return;
+    drawn.days = stamp;
+    var nav = $('days'), chosen = null;
+    clear(nav);
+    for (var k = 0; k < keys.length; k++) (function (key) {
+      var b = el('button', 'day' + (key === viewKey ? ' is-sel' : ''));
+      b.type = 'button';
+      b.setAttribute('aria-pressed', key === viewKey ? 'true' : 'false');
+      b.setAttribute('aria-label', (key === todayKey ? 'Today, ' : '') + longDate(key));
+      b.appendChild(el('span', '', key === todayKey ? 'Today' : wd3(key)));
+      b.appendChild(el('b', '', String(utc(key).getUTCDate())));
+      b.onclick = function () { choose(key === todayKey ? null : key); };
+      if (key === viewKey) chosen = b;
+      nav.appendChild(b);
+    })(keys[k]);
+    $('days-label').style.display = keys.length ? '' : 'none';
+    if (chosen && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = Math.max(0, chosen.offsetLeft - 60);
+  }
+
+  function draw() {
+    var now = muscat(nowMs());
+    var viewKey = selected || now.key, isToday = viewKey === now.key, day = dayOf(viewKey);
+
+    document.title = cfg.title || document.title;
+    var unit = $('unit'), heading = (cfg.title || '') + '|' + (cfg.unit || '');
+    if (drawn.unit !== heading) { drawn.unit = heading; clear(unit); unit.appendChild(el('b', '', cfg.title || '')); unit.appendChild(document.createTextNode(cfg.unit || '')); }
+    $('date').textContent = longDate(viewKey);
+    $('meta').textContent = day && day.block ? 'Block ' + day.block + (day.week ? ', week ' + day.week : '') : '';
+    $('clock').textContent = hm(now.min);
+
+    drawNotices(viewKey, isToday, now);
+    drawBand(viewKey, isToday, now);
+    drawDays(now.key, viewKey);
+
+    // The reading in hand is more than an hour old and a fresh one is on its way: say so, and hold
+    // the names back a little until it arrives.
+    var old = board && nowMs() - board.builtAt > 60 * 60000;
+    var checking = live && !confirmed && asking && old;
+    $('page').className = 'page' + (checking ? ' is-checking' : '');
+    $('status').textContent = !board ? (asking ? 'Reading the rota\u2026' : '') : checking ? 'Checking the rota\u2026' : statusLine(viewKey, isToday, now, day);
+
+    var shifts = shiftsFor(viewKey, isToday, now);
+    var stamp = [viewKey, isToday, board ? board.builtAt : 0, shifts.map(function (s) { return s.kind + s.state + s.day.date; }).join(',')].join('|');
+    if (stamp !== drawn.main) {
+      drawn.main = stamp;
+      var main = $('board');
+      clear(main);
+      for (var i = 0; i < shifts.length; i++) main.appendChild(shiftBox(shifts[i]));
+    }
+
+    var foot = $('foot');
+    clear(foot);
+    if (board) foot.appendChild(el('p', '', 'Read from the PICU rota at ' + board.builtText + '.'));
+    if (cfg.hub) {
+      var p = el('p'), a = el('a', '', cfg.hub.replace(/^https?:\/\//, ''));
+      a.href = cfg.hub; a.target = '_blank'; a.rel = 'noopener';
+      p.appendChild(a); foot.appendChild(p);
+    }
+
+    // The date rolled over, or today is not in the reading we hold: ask for a new one. Not more
+    // than once every few seconds, so a phone with no signal does not ask over and over.
+    if (live && board && (board.today !== now.key || !dayOf(now.key)) && Date.now() - lastAsk > 15000) ask();
+  }
+
+  function choose(key) {
+    selected = key;
+    lastTouch = Date.now();
+    draw();
+    window.scrollTo(0, 0);
+  }
+
+  // ---------------------------------------------------------- keeping it fresh
+
+  function ask() {
+    if (!live || asking) return;
+    asking = true;
+    lastAsk = Date.now();
+    var arrived = function (json) {
+      asking = false;
+      var b = null;
+      try { b = JSON.parse(json); } catch (e) { b = null; }
+      if (!usable(b)) { failed = true; if (b && b.error) readError = b.error; draw(); return; }
+      skew = b.serverNow - Date.now();
+      if (b.cfg) cfg = b.cfg;
+      board = b; failed = false; confirmed = true;
+      if (api) { try { localStorage.setItem(KEEP, json); } catch (e) {} }
+      draw();
+    };
+    var lost = function () { asking = false; failed = true; draw(); };
+    if (canRun) google.script.run.withSuccessHandler(arrived).withFailureHandler(lost).getBoard();
+    else overTheWeb('1', arrived, lost);
+    draw();
+  }
+
+  // One plain request to the script: '1' for a fresh reading, 'held' for the last one as it stands.
+  function overTheWeb(which, ok, fail) {
+    var x = new XMLHttpRequest();
+    x.open('GET', api + (api.indexOf('?') < 0 ? '?' : '&') + 'data=' + which + '&t=' + Date.now(), true);
+    x.timeout = 35000;
+    x.onload = function () { if (x.status === 200) ok(x.responseText); else fail(); };
+    x.onerror = fail; x.ontimeout = fail;
+    x.send();
+  }
+
+  // A fresh reading takes a few seconds. With nothing recent in hand, the last reading the script
+  // holds is fetched alongside it and shown meanwhile.
+  function peek() {
+    overTheWeb('held', function (json) {
+      var b = null;
+      try { b = JSON.parse(json); } catch (e) { b = null; }
+      if (confirmed || !usable(b) || (board && board.builtAt >= b.builtAt)) return;
+      skew = b.serverNow - Date.now();
+      if (b.cfg) cfg = b.cfg;
+      board = b;
+      draw();
+    }, function () {});
+  }
+
+  function touched() { lastTouch = Date.now(); }
+  ['click', 'keydown', 'touchstart', 'scroll'].forEach(function (name) { window.addEventListener(name, touched, { passive: true }); });
+
+  setInterval(function () {
+    // A screen left on another day goes back to today, so nobody reads tomorrow's team as tonight's.
+    if (selected && Date.now() - lastTouch > 3 * 60000) selected = null;
+    if (live && !document.hidden && Date.now() - lastAsk > 3 * 60000) ask();
+    draw();
+  }, 20000);
+
+  var back = function () { if (live && !document.hidden && Date.now() - lastAsk > 45000) ask(); else draw(); };
+  document.addEventListener('visibilitychange', back);
+  window.addEventListener('pageshow', back);
+
+  draw();
+  ask();
+  if (api && (!board || Date.now() - board.builtAt > 60 * 60000)) peek();
+})();
+</script>
+</body>
+</html>
