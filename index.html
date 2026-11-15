@@ -120,19 +120,18 @@ a { color: var(--plum); }
 .area-0 h3 { color: var(--picu); }
 .area-1 h3 { color: var(--hdu); }
 .area-2 h3 { color: var(--rrt); }
-/* consultant and specialist side by side; residents, GFPs and interns underneath as smaller tags */
-.rows { margin-top: 6px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+/* who covers the unit, as name tags on one line; then residents, GFPs and interns as smaller tags */
+.cover { margin-top: 7px; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.rows { margin-top: 7px; display: grid; gap: 6px; }
 .row { min-width: 0; }
 .row dt { font-size: .9rem; color: var(--ink-soft); margin-bottom: 2px; }
 .row dd { display: flex; flex-wrap: wrap; gap: 5px; min-width: 0; }
-.row-team { grid-column: 1 / -1; }
-.row-team .mag { font-size: .98rem; padding: 2px 8px 3px; border-radius: 8px; }
+.row .mag { font-size: .98rem; padding: 2px 8px 3px; border-radius: 8px; }
 
 /* the on-call team: one line per tier */
 .tiers { display: grid; gap: 1px; background: var(--rule); }
 .tier { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 8px; align-items: start; background: var(--card); padding: 9px 14px 10px; }
 .tier-h b { display: block; font-size: 1rem; font-weight: 600; line-height: 1.2; padding-top: 5px; }
-.tier-h small { font-size: .88rem; color: var(--ink-soft); }
 .tier-p { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
 
 /* a person: a name tag in their own rota colour */
@@ -178,9 +177,10 @@ a { color: var(--plum); }
   .areas, .tiers { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
   .area { padding: 14px 18px 18px; }
   .area h3 { font-size: 1.5rem; padding-top: 9px; }
-  .rows { margin-top: 10px; gap: 10px 14px; }
+  .cover { margin-top: 11px; }
+  .rows { margin-top: 11px; gap: 9px; }
   .row dt { margin-bottom: 3px; }
-  .row-team .mag { font-size: 1rem; padding: 3px 9px 4px; }
+  .row .mag { font-size: 1rem; padding: 3px 9px 4px; }
   .mag { padding: 4px 10px 5px; }
   .tier { grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 13px 18px 16px; align-content: start; }
   .tier-h b { padding-top: 0; font-size: 1.05rem; }
@@ -216,7 +216,7 @@ a { color: var(--plum); }
   <footer class="foot" id="foot"></footer>
 </div>
 
-<script>var BOOT = {"board":null,"cfg":{"title":"PICU on duty","unit":"Sultan Qaboos University Hospital","hub":"https://picuhub.om","areas":[{"label":"PICU","sub":"Intensive care"},{"label":"HDU","sub":"High dependency"},{"label":"RRT","sub":"Rapid response team"}],"tiers":[{"label":"1st on call","sub":"Junior"},{"label":"2nd on call","sub":"R4"},{"label":"3rd on call","sub":"Specialist"},{"label":"4th on call","sub":"Consultant"}],"dayStart":480,"dayEnd":960,"callStart":900,"offsetMin":240},"api":"https://script.google.com/macros/s/AKfycbzqNTRqsxggi-bXbMA39YSNV8XCTs65Ub69DfyAIFpwkk1k9KETxqLh4RdME7xxFFidBQ/exec"};</script>
+<script>var BOOT = {"board":null,"cfg":{"title":"PICU on duty","unit":"Sultan Qaboos University Hospital","hub":"https://picuhub.om","areas":[{"label":"PICU","sub":"Intensive care"},{"label":"HDU","sub":"High dependency"},{"label":"RRT","sub":"Rapid response team"}],"tiers":[{"label":"1st on call"},{"label":"2nd on call"},{"label":"3rd on call"},{"label":"4th on call"}],"dayStart":480,"dayEnd":960,"callStart":900,"offsetMin":240},"api":"https://script.google.com/macros/s/AKfycbzqNTRqsxggi-bXbMA39YSNV8XCTs65Ub69DfyAIFpwkk1k9KETxqLh4RdME7xxFFidBQ/exec"};</script>
 <script>
 (function () {
   'use strict';
@@ -231,7 +231,8 @@ a { color: var(--plum); }
   var canRun = !!(window.google && google.script && google.script.run);
   var api = !canRun && boot.api ? String(boot.api) : '';
   var live = canRun || !!api;
-  var KEEP = 'picu-on-duty.reading.v1';
+  var KEEP = 'picu-on-duty.reading.v2';
+  try { localStorage.removeItem('picu-on-duty.reading.v1'); } catch (e) {}      // the kind of reading an earlier page kept
   if (api && !board) {
     try {
       var kept = JSON.parse(localStorage.getItem(KEEP));
@@ -239,7 +240,7 @@ a { color: var(--plum); }
       if (usable(kept) && kept.days[kept.days.length - 1].date >= dateInMuscat(kept.cfg || cfg)) { board = kept; if (kept.cfg) cfg = kept.cfg; }
     } catch (e) { board = null; }
   }
-  function usable(b) { return !!(b && b.builtAt && b.days && b.days.length && b.days[0].areas && b.days[0].oncall); }
+  function usable(b) { return !!(b && b.builtAt && b.days && b.days.length && b.days[0].oncall && b.days[0].areas && b.days[0].areas.length && b.days[0].areas[0].cover); }
   function dateInMuscat(c) { return new Date(Date.now() + (c.offsetMin || 240) * 60000).toISOString().slice(0, 10); }
 
   var skew = 0;            // the server's clock minus this device's clock
@@ -286,10 +287,7 @@ a { color: var(--plum); }
 
   // A weekend or a public holiday, when nobody is rostered for day cover: the on-call team has the whole day.
   function isOff(day) {
-    if (!day) return false;
-    if (!day.weekend && !day.holiday) return false;
-    for (var i = 0; i < day.areas.length; i++) if (day.areas[i].specialist.length) return false;
-    return true;
+    return !!day && (day.weekend || !!day.holiday) && !day.staffed;
   }
 
   // Dark writing in the same hue as a person's light rota colour.
@@ -368,36 +366,38 @@ a { color: var(--plum); }
     for (var i = 0; i < list.length; i++) into.appendChild(person(list[i]));
   }
 
-  // The page lists who is on and nothing else: an empty slot in the rota is not drawn at all.
-  function areaRows(a) {
+  // The page lists who is on and nothing else. Whoever covers a unit is a name, with no heading
+  // over it and no grade beside it. An empty slot in the rota is not drawn at all.
+  function teamRows(a) {
     return [
-      ['Consultant', a.consultant, 'row-staff'],
-      ['Specialist', a.specialist, 'row-staff'],
-      [a.residents.length === 1 ? 'Resident' : 'Residents', a.residents, 'row-team'],
-      ['GFP', a.gfp, 'row-team'],
-      [a.interns.length === 1 ? 'Intern' : 'Interns', a.interns, 'row-team']
+      [a.residents.length === 1 ? 'Resident' : 'Residents', a.residents],
+      ['GFP', a.gfp],
+      [a.interns.length === 1 ? 'Intern' : 'Interns', a.interns]
     ].filter(function (r) { return r[1].length; });
   }
-  function hasDayTeam(day) { for (var i = 0; i < day.areas.length; i++) if (areaRows(day.areas[i]).length) return true; return false; }
+  function hasDayTeam(day) { for (var i = 0; i < day.areas.length; i++) if (day.areas[i].cover.length || teamRows(day.areas[i]).length) return true; return false; }
   function hasCallTeam(day) { for (var i = 0; i < day.oncall.length; i++) if (day.oncall[i].length) return true; return false; }
 
   function dayBody(day) {
     var body = el('div', 'shift-body'), grid = el('div', 'areas');
     for (var i = 0; i < day.areas.length; i++) {
-      var rows = areaRows(day.areas[i]), meta = cfg.areas[i] || {};
-      if (!rows.length) continue;
+      var a = day.areas[i], rows = teamRows(a), meta = cfg.areas[i] || {};
+      if (!a.cover.length && !rows.length) continue;
       var box = el('article', 'area area-' + i), h3 = el('h3', '', meta.label || '');
       if (meta.sub) { h3.appendChild(document.createTextNode(' ')); h3.appendChild(el('small', '', meta.sub)); }
       box.appendChild(h3);
-      var dl = el('dl', 'rows');
-      for (var r = 0; r < rows.length; r++) {
-        var line = el('div', 'row ' + rows[r][2]), dd = el('dd');
-        line.appendChild(el('dt', '', rows[r][0]));
-        people(dd, rows[r][1]);
-        line.appendChild(dd);
-        dl.appendChild(line);
+      if (a.cover.length) { var top = el('div', 'cover'); people(top, a.cover); box.appendChild(top); }
+      if (rows.length) {
+        var dl = el('dl', 'rows');
+        for (var r = 0; r < rows.length; r++) {
+          var line = el('div', 'row'), dd = el('dd');
+          line.appendChild(el('dt', '', rows[r][0]));
+          people(dd, rows[r][1]);
+          line.appendChild(dd);
+          dl.appendChild(line);
+        }
+        box.appendChild(dl);
       }
-      box.appendChild(dl);
       grid.appendChild(box);
     }
     body.appendChild(grid);
@@ -410,7 +410,6 @@ a { color: var(--plum); }
       if (!day.oncall[i].length) continue;
       var t = cfg.tiers[i] || {}, box = el('div', 'tier'), head = el('div', 'tier-h'), list = el('div', 'tier-p');
       head.appendChild(el('b', '', t.label || ''));
-      if (t.sub) head.appendChild(el('small', '', t.sub));
       people(list, day.oncall[i]);
       box.appendChild(head); box.appendChild(list);
       grid.appendChild(box);
@@ -581,7 +580,7 @@ a { color: var(--plum); }
       draw();
     };
     var lost = function () { asking = false; failed = true; draw(); };
-    if (canRun) google.script.run.withSuccessHandler(arrived).withFailureHandler(lost).getBoard();
+    if (canRun) google.script.run.withSuccessHandler(arrived).withFailureHandler(lost).getReading();
     else overTheWeb('1', arrived, lost);
     draw();
   }
@@ -589,7 +588,7 @@ a { color: var(--plum); }
   // One plain request to the script: '1' for a fresh reading, 'held' for the last one as it stands.
   function overTheWeb(which, ok, fail) {
     var x = new XMLHttpRequest();
-    x.open('GET', api + (api.indexOf('?') < 0 ? '?' : '&') + 'data=' + which + '&t=' + Date.now(), true);
+    x.open('GET', api + (api.indexOf('?') < 0 ? '?' : '&') + 'rota=' + which + '&t=' + Date.now(), true);
     x.timeout = 35000;
     x.onload = function () { if (x.status === 200) ok(x.responseText); else fail(); };
     x.onerror = fail; x.ontimeout = fail;
